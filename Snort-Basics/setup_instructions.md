@@ -1,1 +1,0 @@
-# Snort Setup on Kali
