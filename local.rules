@@ -1,0 +1,1 @@
+alert icmp any any <> any any (msg:"ICMP any (bi)"; sid:9000003; rev:1;)
