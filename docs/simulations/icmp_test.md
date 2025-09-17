@@ -54,7 +54,6 @@ Make sure the rules line is inside the ips = {} block and after the variables.
 Validate configuration:
 sudo snort -T -c /etc/snort/snort.lua
 
-Screenshot: Images/simulations/icmp/rule_validation.png
 
 
 4. 
