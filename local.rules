@@ -1,0 +1,4 @@
+alert icmp any any <> any any (msg:"ICMP any (bi)"; sid:9000003; rev:1;)
+
+alert tcp any any -> any any (msg:"TCP SYN scan detected"; flags:S; sid:9000004; rev:1;)
+
