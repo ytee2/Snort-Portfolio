@@ -1,4 +1,5 @@
 alert icmp any any <> any any (msg:"ICMP any (bi)"; sid:9000003; rev:1;)
 alert tcp any any -> any any (msg:"TCP SYN scan detected"; flags:S; sid:9000004; rev:1;)
 alert udp any any -> any any (msg:"UDP Scan Detected"; sid:9000005; rev:1;)
+alert tcp any any -> any 80 (msg:"HTTP Directory Traversal Detected"; content:"../"; http_uri; sid:9000006; rev:1;)
 
