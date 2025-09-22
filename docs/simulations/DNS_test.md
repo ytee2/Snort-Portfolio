@@ -13,7 +13,8 @@ alert udp any any -> any 53 (msg:"DNS Flood Detected"; detection_filter: track b
 Command: sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i lo -A alert_full -k none -l /var/log/snort
 
 ## Step 3: Testing
-Test: for i in {1..60}; do dig @127.0.0.1 evil.com; done
+
+ for i in {1..60}; do dig @127.0.0.1 evil.com; done
 
 Alert Output: [**] [116:150:1] "(decode) loopback IP" [**]
 [Priority: 3] 
