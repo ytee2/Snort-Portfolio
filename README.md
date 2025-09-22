@@ -1,13 +1,57 @@
+                                                                                                                                                                                                                                          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                                                                                                                                          
+                                                                                                                                                                                               
 # Snort Intrusion Detection Portfolio
 
 This repository documents my setup, configuration, and testing of Snort 3, an open-source intrusion detection and prevention system (IDS/IPS). The goal is to demonstrate practical skills in network security monitoring, rule creation, and traffic analysis on Kali Linux.
 
 ## Sections
-- [ICMP Ping Sweep Detection](docs/icmp.md): Basic network discovery alerts.
-- [TCP SYN Scan Detection](docs/tcp.md): Port scan detection.
-- [UDP Scan/Flood Detection](docs/udp_test.md): Connectionless probes.
-- [HTTP Directory Traversal Detection](docs/http.md): App-layer attacks.
-- [DNS Flood Detection](docs/dns.md): Suspicious query rate limiting.
+- [ICMP Ping Sweep Detection](docs/simulations/icmp_test.md): Basic network discovery alerts.
+- [TCP SYN Scan Detection](docs/simulations/tcp_test.md): Port scan detection.
+- [UDP Scan/Flood Detection](docs/simulations/udp_test.md): Connectionless probes.
+- [HTTP Directory Traversal Detection](docs/simulations/http_test.md): App-layer attacks.
+- [DNS Flood Detection](docs/simulations/DNS_test.md): Suspicious query rate limiting.
 
 ## Setup & Installation
 Operating System: Kali Linux  
@@ -26,8 +70,7 @@ Port scanning (Nmap TCP/UDP)
 Abnormal DNS queries/floods
 HTTP directory traversal
 
-Example run command:
-bashsudo snort -c /etc/snort/snort.lua -R local.rules -i lo -A alert_full -k none -l /var/log/snort
+Example run command:bashsudo snort -c /etc/snort/snort.lua -R local.rules -i lo -A alert_full -k none -l /var/log/snort
 Learning Outcomes
 
 Practical understanding of IDS concepts (passive mode, thresholds).
