@@ -3,7 +3,7 @@
 ## Objective
 Test Snort’s ability to detect ICMP (ping) traffic.
 
-## Steps
+# Steps
 #1. Verified Snort version:
    ```bash
    snort -V
