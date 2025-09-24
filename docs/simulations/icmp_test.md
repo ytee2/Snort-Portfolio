@@ -8,7 +8,7 @@ Test Snort’s ability to detect ICMP (ping) traffic.
    ```bash
    snort -V
 
-Screenshot:![Snort Startup Output] /Snort-Portfolio/images/simulations/icmp/snort_version.png
+Screenshot:[Screenshot](Snort-Portfolio/images/simulations/icmp/snort_version.png)
 
 #2. Identify your network interface (commonly eth0 in Kali):
 
@@ -66,6 +66,7 @@ sudo mkdir -p /var/log/snort
 sudo snort -c /etc/snort/snort.lua -i eth0 -A alert_fast -R ~/Snort-Portfolio/local.rules
 NB : (replace eth0 with your interface if different)
 ping 8.8.8.8
-Screenshot:![Snort Startup Output] Images/simulations/icmp/ping.png
+
+   [Screenshot](Images/simulations/icmp/ping.png)
 
 

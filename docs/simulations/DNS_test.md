@@ -24,7 +24,7 @@ TCP TTL:64 TOS:0x0 ID:63365 IpLen:20 DgmLen:52 DF
 TCP Options (3) => NOP NOP TS: 4200925087 4200863646
 
 
-Screenshot: ![Snort Startup Output] Snort-Portfolio/Images/simulations/DNS/DNS_ping_alert.png
+ [Screenshot](Snort-Portfolio/Images/simulations/DNS/DNS_ping_alert.png): ping alert
 
 
 ## Key Takeaways
