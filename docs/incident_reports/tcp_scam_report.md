@@ -17,3 +17,4 @@ A TCP SYN scan was detected targeting localhost (127.0.0.1) on September 18, 202
 - **Protocol:** TCP, SYN flag set, no ACK (DgmLen:44, Seq:0x95C6FA9A)
 
 **Evidence (Snort Alert Excerpt):**
+ [] [1:9000004:1] "TCP SYN scan detected" [] [Priority: 0] 09/21-07:18:12.405977 127.0.0.1:35511 -> 127.0.0.1:10180 TCP TTL:45 TOS:0x0 ID:43324 IpLen:20 DgmLen:44 *****S Seq: 0x95C6FA9A Ack: 0x0 Win: 0x400 TcpLen: 24 TCP Options
