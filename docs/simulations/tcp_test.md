@@ -15,7 +15,7 @@ Command:sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i l
 -i lo: Captures local traffic.
 -A alert_full: Outputs alerts to terminal.
 
-Screenshot: /Snort-Portfolio/Images/simulations/tcp/snort_startup.png
+Screenshot: ![Snort Startup Output]/Snort-Portfolio/Images/simulations/tcp/snort_startup.png
 
 ## Step 3: Testing the Rule
 Test Command: nmap -sS localhost
@@ -27,7 +27,7 @@ TCP TTL:45 TOS:0x0 ID:43324 IpLen:20 DgmLen:44
 ******S* Seq: 0x95C6FA9A  Ack: 0x0  Win: 0x400  TcpLen: 24
 TCP Options (1) => MSS: 1460
 
-Screenshot :/Snort-Portfolio/Images/simulations/tcp/ping_alert.png
+Screenshot:![Snort Startup Output]/Snort-Portfolio/Images/simulations/tcp/ping_alert.png
 
 
 
