@@ -23,8 +23,7 @@ TCP TTL:64 TOS:0x0 ID:63365 IpLen:20 DgmLen:52 DF
 ***A**** Seq: 0xECB7F271  Ack: 0x462E6D11  Win: 0x200  TcpLen: 32
 TCP Options (3) => NOP NOP TS: 4200925087 4200863646
 
-
- [Screenshot](Snort-Portfolio/Images/simulations/DNS/DNS_ping_alert.png): ping alert
+ Screenshot: (Snort-Portfolio/Images/simulations/DNS/DNS_ping_alert.png)
 
 
 ## Key Takeaways

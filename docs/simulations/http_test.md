@@ -22,7 +22,7 @@ TCP TTL:64 TOS:0x0 ID:44637 IpLen:20 DgmLen:52 DF
 ***A**** Seq: 0x462E6D11  Ack: 0xECB7F272  Win: 0x1FF  TcpLen: 32
 TCP Options (3) => NOP NOP TS: 4196861856 4196369832
 
-Screenshot:[Screenshot](Snort-Portfolio/Images/simulations/http/http_ping_alert.png): ping alert
+Screenshot:(Snort-Portfolio/Images/simulations/http/http_ping_alert.png)
 
 ## Key Takeaways
 Use http_uri for normalized URI checks. Add nocase for case-insensitivity.

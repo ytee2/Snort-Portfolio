@@ -25,7 +25,7 @@ UDP TTL:47 TOS:0x0 ID:23728 IpLen:20 DgmLen:28
 Len: 0  Csum: 8414
 ** END OF DUMP
 
-Screenshot:![Snort Startup Output] /Snort-Portfolio/Images/simulations/udp/ping_alert.png
+Screenshot: /Snort-Portfolio/Images/simulations/udp/ping_alert.png
 
 
 

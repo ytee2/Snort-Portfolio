@@ -67,6 +67,6 @@ sudo snort -c /etc/snort/snort.lua -i eth0 -A alert_fast -R ~/Snort-Portfolio/lo
 NB : (replace eth0 with your interface if different)
 ping 8.8.8.8
 
-   [Screenshot](Images/simulations/icmp/ping.png)
+Screenshot: (Images/simulations/icmp/ping.png)
 
 
