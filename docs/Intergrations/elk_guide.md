@@ -63,3 +63,14 @@ json{
   },
   "tagline" : "You Know, for Search"
 }
+
+
+
+Stage 3: Install Logstash
+Run in ~/Snort-Experiments(or your created Elk folder):
+bash# Repo already added from ES; update & install
+sudo apt update
+sudo apt install logstash -y
+
+# Enable (don't start yet)
+sudo systemctl enable logstash
