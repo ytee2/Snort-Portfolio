@@ -74,3 +74,53 @@ sudo apt install logstash -y
 
 # Enable (don't start yet)
 sudo systemctl enable logstash
+
+
+### Stage 4: Install Kibana
+Kibana provides the web UI for querying/visualizing Elasticsearch data (e.g., Snort alerts). It connects to ES, so if ES has security enabled (HTTPS/auth), Kibana setup involves tokens/passwords.
+
+Commands:
+```bash
+sudo apt update
+sudo apt install kibana -y
+Config (edit with sudo nano /etc/kibana/kibana.yml):
+textserver.port: 5601
+server.host: "localhost"
+elasticsearch.hosts: ["https://localhost:9200"]  # Use HTTPS since ES is secured (changed from HTTP)
+elasticsearch.username: "elastic"
+elasticsearch.password:  # Your ES elastic user password (generated during ES install)
+Start & enable:
+bashsudo systemctl daemon-reload
+sudo systemctl start kibana
+sudo systemctl enable kibana
+sudo ufw allow 5601/tcp
+
+Test API 
+curl -X GET "https://localhost:5601/api/status" -u elastic:"your password" -k  # Use HTTPS/auth
+
+
+# Setup Process Explanation
+
+
+Security/Auth: Since Elasticsearch was installed with security enabled (default in 8.x), Kibana requires an enrollment token or verification code to connect securely. The elastic password (D7+dnA*lh4x6eZ11_3bR) is the superuser cred from ES setup—use it for API tests and Kibana config.
+
+
+Enrollment/Verification: On first browser access, Kibana prompts for a token. Generate with:
+bashsudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana
+(Output: A base64 token like eyJ2ZXIiOiI4LjE5LjQiLC...—paste into browser.)
+If invalid, use verification code:
+bashsudo /usr/share/kibana/bin/kibana-verification-code
+(Output: Code like abcdef12-3456-7890-abcd-ef1234567890—paste in browser prompt.)
+
+
+Browser Interface: After token/code, Kibana shows the welcome screen (dark/light theme selector). Log in with elastic/D7+dnA*lh4x6eZ11_3bR. It auto-configures with ES. If prompted for kibana_system password, run:
+bashsudo /usr/share/kibana/bin/kibana-setup-passwords
+(Generates/sets passwords—note them down.)
+Interface Overview:
+
+Left Sidebar: Stack Management (indexes), Discover (queries), Dashboard (visuals), Dev Tools (curl-like).
+Home: Onboarding tour—skip or follow for basics.
+First view: Empty Discover (no data yet)
+
+Screenshot: /Snort-Portfolio/Images/Intergrations/kibana_interface.png
+
