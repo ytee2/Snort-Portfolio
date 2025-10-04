@@ -176,3 +176,22 @@ Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.pr
 Configuration OK
 [INFO ] 2025-10-04 03:55:22.157 [LogStash::Runner] runner - Using config.test_and_exit mode. Config Validation Result: OK. Exiting Logstash
                                                                                                                                                  
+
+
+### Stage 6: Run Snort with JSON Output
+Snort 3 JSON via lua config (file: alert_json.txt).
+
+Commands:
+```bash
+sudo grep -A2 "alert_json" /etc/snort/snort.lua  # Verify
+sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i eth0 -A fast -l /var/log/snort/ -v  # Run
+sudo nmap -sS -p 80 example.com  # Traffic
+ls -la /var/log/snort/  # Check
+sudo cat /var/log/snort/alert_json.txt  # JSON
+sudo journalctl -u logstash -f  # Ingest
+
+Sample JSON (sudo cat /var/log/snort/alert_json.txt): { "timestamp" : "10/04-04:58:42.408710", "pkt_num" : 4886, "proto" : "TCP", "pkt_gen" : "raw", "pkt_len" : 52, "dir" : "C2S", "src_ap" : "127.0.0.1:60096", "dst_ap" : "127.0.0.1:9200", "rule" : "116:150:1", "action" : "allow" }
+
+Logstash Ingest (journalctl -u logstash -f): { "timestamp" : "10/04-04:50:06.272178", "pkt_num" : 3536, "proto" : "TCP", "pkt_gen" : "raw", "pkt_len" : 52, "dir" : "S2C", "src_ap" : "127.0.0.1:9200", "dst_ap" : "127.0.0.1:44558", "rule" : "116:150:1", "action" : "allow" }
+
+
