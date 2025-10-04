@@ -124,3 +124,55 @@ First view: Empty Discover (no data yet)
 
 Screenshot: /Snort-Portfolio/Images/Intergrations/kibana_interface.png
 
+
+### Stage 5: Configure Logstash for Snort Alerts
+Logstash parses Snort JSON alerts (timestamp, SID, msg, IPs) and ships to ES.
+
+Commands:
+```bash
+sudo nano /etc/logstash/conf.d/snort.conf  # Paste config below
+Config (snort.conf):
+textinput {
+  file {
+    path => "/var/log/snort/alert_json"
+    start_position => "beginning"
+    sincedb_path => "/dev/null"
+  }
+}
+
+filter {
+  grok {
+    match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} $$ %{INT:sid}\:%{INT:rev} $$ %{GREEDYDATA:msg} $$ %{WORD:proto} $$ %{IP:src_ip}:%{INT:src_port} -> %{IP:dst_ip}:%{INT:dst_port}" }
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["https://localhost:9200"]
+    user => "elastic"
+    password => "D7+dnA*lh4x6eZ11_3bR"
+    index => "snort-alerts-%{+YYYY.MM.dd}"
+    ssl_verification_mode => "certificate"
+  }
+  stdout { codec => rubydebug }
+}
+sudo /usr/share/logstash/bin/logstash --config.test_and_exit -f /etc/logstash/conf.d/snort.conf
+sudo systemctl start logstash
+
+Test Output:Using bundled JDK: /usr/share/logstash/jdk
+WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
+Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.properties. Using default config which logs errors to the console
+[WARN ] 2025-10-04 03:55:18.388 [main] runner - Starting from version 9.0, running with superuser privileges is not permitted unless you explicitly set 'allow_superuser' to true, thereby acknowledging the possible security risks
+[WARN ] 2025-10-04 03:55:18.397 [main] runner - NOTICE: Running Logstash as a superuser is strongly discouraged as it poses a security risk. Set 'allow_superuser' to false for better security.
+[WARN ] 2025-10-04 03:55:18.407 [main] runner - 'pipeline.buffer.type' setting is not explicitly defined.Before moving to 9.x set it to 'heap' and tune heap size upward, or set it to 'direct' to maintain existing behavior.
+[INFO ] 2025-10-04 03:55:18.408 [main] runner - Starting Logstash {"logstash.version"=>"8.19.4", "jruby.version"=>"jruby 9.4.9.0 (3.1.4) 2024-11-04 547c6b150e OpenJDK 64-Bit Server VM 21.0.8+9-LTS on 21.0.8+9-LTS +indy +jit [x86_64-linux]"}
+[INFO ] 2025-10-04 03:55:18.433 [main] runner - JVM bootstrap flags: [-Xms1g, -Xmx1g, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djruby.compile.invokedynamic=true, -XX:+HeapDumpOnOutOfMemoryError, -Djava.security.egd=file:/dev/urandom, -Dlog4j2.isThreadContextMapInheritable=true, -Djruby.regexp.interruptible=true, -Djdk.io.File.enableADS=true, --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED, --add-opens=java.base/java.security=ALL-UNNAMED, --add-opens=java.base/java.io=ALL-UNNAMED, --add-opens=java.base/java.nio.channels=ALL-UNNAMED, --add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, -Dio.netty.allocator.maxOrder=11]
+[INFO ] 2025-10-04 03:55:19.076 [main] StreamReadConstraintsUtil - Jackson default value override `logstash.jackson.stream-read-constraints.max-string-length` configured to `200000000` (logstash default)
+[INFO ] 2025-10-04 03:55:19.120 [main] StreamReadConstraintsUtil - Jackson default value override `logstash.jackson.stream-read-constraints.max-number-length` configured to `10000` (logstash default)
+[INFO ] 2025-10-04 03:55:19.120 [main] StreamReadConstraintsUtil - Jackson default value override `logstash.jackson.stream-read-constraints.max-nesting-depth` configured to `1000` (logstash default)
+[WARN ] 2025-10-04 03:55:20.379 [LogStash::Runner] multilocal - Ignoring the 'pipelines.yml' file because modules or command line options are specified
+[INFO ] 2025-10-04 03:55:21.214 [LogStash::Runner] Reflections - Reflections took 196 ms to scan 1 urls, producing 150 keys and 530 values
+[INFO ] 2025-10-04 03:55:22.146 [LogStash::Runner] javapipeline - Pipeline `main` is configured with `pipeline.ecs_compatibility: v8` setting. All plugins in this pipeline will default to `ecs_compatibility => v8` unless explicitly configured otherwise.
+Configuration OK
+[INFO ] 2025-10-04 03:55:22.157 [LogStash::Runner] runner - Using config.test_and_exit mode. Config Validation Result: OK. Exiting Logstash
+                                                                                                                                                 
