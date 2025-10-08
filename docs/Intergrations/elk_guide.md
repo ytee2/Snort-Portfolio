@@ -125,26 +125,30 @@ First view: Empty Discover (no data yet)
 Screenshot: /Snort-Portfolio/Images/Intergrations/kibana_interface.png
 
 
-### Stage 5: Configure Logstash for Snort Alerts
-Logstash parses Snort JSON alerts (timestamp, SID, msg, IPs) and ships to ES.
+### Stage 5: Configure Logstash for Snort Syslog Alerts
+Logstash reads Snort syslog text alerts from /var/log/syslog, parses fields, ships to ES.
 
 Commands:
 ```bash
 sudo nano /etc/logstash/conf.d/snort.conf  # Paste config below
+sudo /usr/share/logstash/bin/logstash --config.test_and_exit -f /etc/logstash/conf.d/snort.conf
+sudo systemctl start logstash
 Config (snort.conf):
-textinput {
+input {
   file {
-    path => "/var/log/snort/alert_json"
+    path => "/var/log/syslog"
     start_position => "beginning"
     sincedb_path => "/dev/null"
+    type => "syslog"
   }
 }
 
 filter {
   grok {
-    match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} $$ %{INT:sid}\:%{INT:rev} $$ %{GREEDYDATA:msg} $$ %{WORD:proto} $$ %{IP:src_ip}:%{INT:src_port} -> %{IP:dst_ip}:%{INT:dst_port}" }
+    match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} %{WORD:host} snort: \[\*\*\] \[%{NUMBER:sid}:%{NUMBER:gid}:%{NUMBER:rev}\] %{GREEDYDATA:alert_msg} \[\*\*\] \[Priority: %{NUMBER:priority}\] \{%{WORD:proto}\} %{IP:src_ip}:%{NUMBER:src_port} -> %{IP:dst_ip}:%{NUMBER:dst_port}" }
   }
 }
+
 
 output {
   elasticsearch {
@@ -178,20 +182,21 @@ Configuration OK
                                                                                                                                                  
 
 
-### Stage 6: Run Snort with JSON Output
-Snort 3 JSON via lua config (file: alert_json.txt).
+### Stage 6: Run Snort with Syslog Output
+Snort logs alerts to syslog (via lua config).
 
 Commands:
 ```bash
-sudo grep -A2 "alert_json" /etc/snort/snort.lua  # Verify
-sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i eth0 -A fast -l /var/log/snort/ -v  # Run
+sudo grep -A2 "log_to_syslog" /etc/snort/snort.lua  # Verify syslog config
+sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i eth0 -A fast -l /var/log/snort/ -v  # Run (syslog to /var/log/syslog)
 sudo nmap -sS -p 80 example.com  # Traffic
-ls -la /var/log/snort/  # Check
-sudo cat /var/log/snort/alert_json.txt  # JSON
+sudo tail -f /var/log/syslog | grep snort  # Check syslog alerts
 sudo journalctl -u logstash -f  # Ingest
 
-Sample JSON (sudo cat /var/log/snort/alert_json.txt): { "timestamp" : "10/04-04:58:42.408710", "pkt_num" : 4886, "proto" : "TCP", "pkt_gen" : "raw", "pkt_len" : 52, "dir" : "C2S", "src_ap" : "127.0.0.1:60096", "dst_ap" : "127.0.0.1:9200", "rule" : "116:150:1", "action" : "allow" }
-
 Logstash Ingest (journalctl -u logstash -f): { "timestamp" : "10/04-04:50:06.272178", "pkt_num" : 3536, "proto" : "TCP", "pkt_gen" : "raw", "pkt_len" : 52, "dir" : "S2C", "src_ap" : "127.0.0.1:9200", "dst_ap" : "127.0.0.1:44558", "rule" : "116:150:1", "action" : "allow" }
+
+
+Explanation: log_to_syslog sends to syslog. Tail checks alerts; Logstash parses and ingests to ES.
+
 
 
