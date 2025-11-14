@@ -1,8 +1,8 @@
-ELK Integration for Snort3 Alerts
+## ELK Integration for Snort3 Alerts
 This guide sets up a simple ELK Stack (Elasticsearch, Logstash, Kibana) to ingest Snort alert fast logs. Built on Kali Linux with Snort3.
 Prerequisites
 
-Kali Linux with Snort3 installed.
+## Kali Linux with Snort3 installed.
 Run in ~/Snort-Experiments for testing.
 4GB+ RAM.
 
@@ -19,14 +19,14 @@ Run in ~/Snort-Experiments:
 bash# Add GPG key
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
 
-# Add repo (8.x)
+### Add repo (8.x)
 echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
 
-# Update & install
+#$$ Update & install
 sudo apt update
 sudo apt install elasticsearch -y
 
-# Config for single-node
+### Config for single-node
 sudo nano /etc/elasticsearch/elasticsearch.yml
 Add:
 textnetwork.host: localhost
@@ -37,7 +37,7 @@ sudo systemctl daemon-reload
 sudo systemctl start elasticsearch
 sudo systemctl enable elasticsearch
 
-# Test (with HTTPS/auth enabled)
+### Test (with HTTPS/auth enabled)
 curl -k https://localhost:9200/ -u elastic:'D7+dnA*lh4x6eZ11_3bR'
 Output:
 json{
@@ -67,9 +67,11 @@ bash# Repo already added from ES; update & install
 sudo apt update
 sudo apt install logstash -y
 
-# Enable (don't start yet)
+
+
+
 sudo systemctl enable logstash
-Stage 4: Install Kibana
+## Stage 4: Install Kibana
 Kibana provides the web UI for querying/visualizing Elasticsearch data (e.g., Snort alerts). It connects to ES, so if ES has security enabled (HTTPS/auth), Kibana setup involves tokens/passwords.
 Commands:
 bashsudo apt update
@@ -89,7 +91,7 @@ Test API:
 bashcurl -X GET "https://localhost:5601/api/status" -u elastic:"D7+dnA*lh4x6eZ11_3bR" -k  # Use HTTPS/auth
 Setup Process Explanation
 
-Security/Auth: Since Elasticsearch was installed with security enabled (default in 8.x), Kibana requires an enrollment token or verification code to connect securely. The elastic password (D7+dnA*lh4x6eZ11_3bR) is the superuser cred from ES setup—use it for API tests and Kibana config.
+ Security/Auth: Since Elasticsearch was installed with security enabled (default in 8.x), Kibana requires an enrollment token or verification code to connect securely. The elastic password (your password) is the superuser cred from ES setup—use it for API tests and Kibana config.
 Enrollment/Verification: On first browser access, Kibana prompts for a token. Generate with:bashsudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana(Output: A base64 token like eyJ2ZXIiOiI4LjE5LjQiLC...—paste into browser.)If invalid, use verification code:bashsudo /usr/share/kibana/bin/kibana-verification-code(Output: Code like abcdef12-3456-7890-abcd-ef1234567890—paste in browser prompt.)
 Browser Interface: After token/code, Kibana shows the welcome screen (dark/light theme selector). Log in with elastic/D7+dnA*lh4x6eZ11_3bR. It auto-configures with ES. If prompted for kibana_system password, run:bashsudo /usr/share/kibana/bin/kibana-setup-passwords(Generates/sets passwords—note them down.)Interface Overview:
 Left Sidebar: Stack Management (indexes), Discover (queries), Dashboard (visuals), Dev Tools (curl-like).
@@ -97,7 +99,7 @@ Home: Onboarding tour—skip or follow for basics.
 First view: Empty Discover (no data yet)—we'll add index pattern in Stage 7.
 
 
-Kibana Welcome Interface
+## Kibana Welcome Interface
 Stage 5: Configure Logstash for Snort Alert Fast Logs
 Logstash reads Snort alert_fast.txt text alerts, parses fields with dissect/ruby, ships to ES.
 Commands:
