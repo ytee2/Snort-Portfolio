@@ -1,46 +1,122 @@
 # TCP SYN Scan Detection with Snort 3
 
 ## Overview
-Detect TCP SYN scans using a custom Snort rule. Tests show passive mode on eth0 misses local outgoing traffic; use loopback or incoming scans.
+This simulation demonstrates detection and investigation of a TCP SYN scan using
+Snort 3 and Kibana. TCP SYN scans are a common reconnaissance technique used by
+attackers to identify open ports and listening services prior to exploitation.
 
-Tools: Snort 3.1.82.0, nmap, tcpdump.
+---
+
+## Tools Used
+- Snort 3.1.82.0
+- Nmap
+- ELK Stack (Elasticsearch, Logstash, Kibana)
+
+---
 
 ## Step 1: Rule Creation
-Rule in local.rules for SYN-only packets.
+A custom Snort rule was created to detect TCP packets with only the SYN flag set,
+indicating a potential port scan.
 
-Rule: alert tcp any any -> any any (msg:"TCP SYN scan detected"; flags:S; sid:9000004; rev:1;)
+Rule:
+alert tcp any any -> any any (msg:"TCP SYN scan detected"; flags:S; sid:9000004; rev:1;)
 
-## Step 2: Snort Configuration and Run
-Command:sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i lo -A alert_full -k none -l /var/log/snort
--i lo: Captures local traffic.
--A alert_full: Outputs alerts to terminal.
+yaml
+Copy code
 
-Screenshot: Snort-Portfolio/Images/simulations/tcp/snort_startup.png
+---
 
-## Step 3: Testing the Rule
-Test Command: nmap -sS localhost
+## Step 2: Start Snort IDS
+Snort was started in IDS mode on the loopback interface to capture local test traffic.
 
-Alert Output: [**] [1:9000004:1] "TCP SYN scan detected" [**]
-[Priority: 0] 
-09/21-07:18:12.405977 127.0.0.1:35511 -> 127.0.0.1:10180
-TCP TTL:45 TOS:0x0 ID:43324 IpLen:20 DgmLen:44
-******S* Seq: 0x95C6FA9A  Ack: 0x0  Win: 0x400  TcpLen: 24
-TCP Options (1) => MSS: 1460
+Command:
+sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i lo -A fast -l /var/log/snort -v
 
-Screenshot:/Snort-Portfolio/Images/simulations/tcp/ping_alert.png
+yaml
+Copy code
 
+📸 Screenshot Purpose:  
+`snort_startup.png` shows Snort running successfully with rules loaded and monitoring traffic.
 
+---
 
+## Step 3: Simulate TCP SYN Scan
+A TCP SYN scan was generated using Nmap.
 
-## Key Takeaways
-Rules need traffic direction and interface checks.
-Test config: sudo snort -T -c /etc/snort/snort.lua -R local.rules
-Add thresholds for production to reduce spam.
+Command:
+nmap -sS -p 1-100 127.0.0.1
 
-## References
-Snort Docs: https://www.snort.org/documents
-GitHub Repo: https://github.com/Ytee2]
+yaml
+Copy code
 
+Snort generated alerts indicating detection of SYN-only packets.
 
+📸 Screenshot Purpose:  
+`ping_alert.png` shows the raw Snort alert confirming detection of the scan.
 
+---
 
+## Step 4: Alert Ingestion into ELK
+Snort alerts were ingested into Elasticsearch via Logstash and verified in Kibana
+using the `snort-logs-*` index.
+
+📸 Screenshot Purpose:  
+`tcp_discover.png` confirms alerts are searchable and properly parsed in Kibana Discover.
+
+---
+
+## Step 5: Kibana Investigation
+
+### Source IP Analysis
+A bar chart visualization was created to show alert frequency by source IP.
+
+📸 Screenshot Purpose:  
+`tcp_src_ip_bar.png` confirms the scan originated from a single source, consistent with reconnaissance.
+
+---
+
+### Destination Port Analysis
+A table visualization was created to show which destination ports were targeted.
+
+📸 Screenshot Purpose:  
+`tcp_dst_port_table.png` demonstrates that multiple ports were probed, confirming scanning behavior.
+
+---
+
+### Timeline Analysis
+A time-based visualization was created to analyze alert activity over time.
+
+📸 Screenshot Purpose:  
+`tcp_timeline.png` shows a short burst of activity, indicating a scan rather than persistent access.
+
+---
+
+## How Attackers Use TCP SYN Scans
+Attackers use TCP SYN scans to:
+- Identify open ports
+- Discover listening services
+- Determine potential attack vectors
+
+If a service responds to a SYN packet, the attacker learns that the service is active
+and may attempt exploitation (e.g., SSH brute force, web attacks, database access).
+
+---
+
+## Security Impact
+While no data is accessed during a SYN scan, it exposes the system’s attack surface
+and often precedes exploitation attempts.
+
+---
+
+## Mitigation Recommendations
+- Close unused listening services
+- Restrict access to exposed ports using firewalls
+- Monitor for repeated scanning activity
+- Apply rate limiting where appropriate
+
+---
+
+## Conclusion
+This simulation demonstrates detection of reconnaissance activity using Snort and
+investigation using Kibana to determine scope, pattern, and severity. The same
+workflow applies to real-world SOC alert triage.
