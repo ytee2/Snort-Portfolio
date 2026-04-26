@@ -134,8 +134,13 @@ Configured a full Logstash pipeline to parse Snort's `alert_fast.txt` log format
 
 Full guide: [docs/integration/elk_guide.md](docs/integration/elk_guide.md)
 
-Screenshots: [Images/Intergrations/](Images/Intergrations/)
-
+Screenshots:
+- [kibana_interface.png](Images/Intergrations/kibana_interface.png) — Kibana first login
+- [index_pattern.png](Images/Intergrations/index_pattern.png) — snort-logs-* index pattern setup
+- [alert_types.png](Images/Intergrations/alert_types.png) — Alert types bar chart
+- [alert_timeline.png](Images/Intergrations/alert_timeline.png) — Alert timeline dashboard
+- [source_ips.png](Images/Intergrations/source_ips.png) — Source IP table
+- [kibana_dashboard.png](Images/Intergrations/kibana_dashboard.png) — Full Snort IDS dashboard
 ---
 
 ## Lab Setup
