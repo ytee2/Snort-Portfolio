@@ -120,3 +120,34 @@ and often precedes exploitation attempts.
 This simulation demonstrates detection of reconnaissance activity using Snort and
 investigation using Kibana to determine scope, pattern, and severity. The same
 workflow applies to real-world SOC alert triage.
+
+
+---
+
+## Wireshark Analysis
+
+### PCAP File
+`logs/pcaps/tcp_capture.pcap`
+
+### What the Capture Shows
+The PCAP contains SYN packets sent from a single source port to multiple
+destination ports in rapid succession. This is the exact pattern produced
+by `nmap -sS -p 1-100 127.0.0.1`.
+
+### Packet Breakdown
+- **Flags: 0x002 (SYN)** — every outgoing packet has only the SYN flag set
+- Destination ports change every packet — 25, 53, 22, 21, 23 etc
+- Closed ports respond with RST/ACK — confirming port is not listening
+- Open port 22 (SSH) responded with SYN/ACK — confirming service is running
+- Nmap immediately sends RST after receiving SYN/ACK — never completes handshake
+- `[Conversation completeness: Incomplete]` visible in Wireshark — confirms half-open scan
+
+### What This Proves
+A normal TCP connection completes a full three-way handshake (SYN → SYN/ACK → ACK).
+A SYN scan deliberately never completes the handshake — it only sends SYN packets
+to probe which ports are open without establishing a full connection. This makes it
+stealthier than a full connect scan because it never appears in application logs,
+only at the network level. Wireshark and Snort are both needed to detect this.
+
+### Screenshot
+`Images/Intergrations/tcp_wireshark.png`

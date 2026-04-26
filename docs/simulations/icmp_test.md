@@ -70,3 +70,30 @@ ping 8.8.8.8
 Screenshot: (Images/simulations/icmp/ping.png)
 
 
+---
+
+## Wireshark Analysis
+
+### PCAP File
+`logs/pcaps/icmp_capture.pcap`
+
+### What the Capture Shows
+The PCAP contains 20 packets — 10 ICMP Echo Requests and 10 Echo Replies,
+one pair per second over 9 seconds. This is the exact pattern produced by
+`ping -c 10 127.0.0.1`.
+
+### Packet Breakdown
+- **Type 8** — Echo Request (ping going out)
+- **Type 0** — Echo Reply (ping coming back)
+- Each request is immediately followed by its reply within microseconds
+- Sequence numbers increment by 1 per ping (seq=1, seq=2, seq=3...)
+- All traffic is 98 bytes — consistent fixed size confirms automated tool
+
+### What This Proves
+A human manually pinging would have irregular timing. The consistent
+1-second intervals and fixed packet sizes confirm this was an automated
+ping sweep — exactly the behaviour Snort's rule sid:9000003 is designed
+to detect.
+
+### Screenshot
+`Images/Intergrations/icmp_wireshark.png`
