@@ -118,6 +118,15 @@ Full guide: [Snort-Basics/snort_installation.md](Snort-Basics/snort_installation
 
 ---
 
+**SSH Brute-Force**
+- What it is: An attacker uses automated tools to rapidly try thousands of username and password combinations against an SSH server. One of the most common attacks seen in real SOC environments.
+- How I simulated it: `hydra -l root -P passwords.txt ssh://127.0.0.1 -t 4 -V`
+- Rule: `alert tcp any any -> any 22 (msg:"SSH Brute Force Detected"; detection_filter: track by_src, count 5, seconds 60; sid:9000009; rev:1;)`
+- Result: Rule did not fire on loopback due to SSH encryption and stream handling limitations. tcpdump confirmed attack traffic was present. Rule verified as correctly loaded by Snort. Documented why it would fire correctly on a live network interface.
+- Simulation: [docs/simulations/ssh_test.md](docs/simulations/ssh_test.md)
+- Report: [docs/incident_reports/ssh_incident_report.md](docs/incident_reports/ssh_incident_report.md)
+---
+
 ### 3. ELK Stack Integration
 
 Configured a full Logstash pipeline to parse Snort's `alert_fast.txt` log format and ship alerts to Elasticsearch. Built three Kibana dashboards for SOC-style investigation.
@@ -176,9 +185,8 @@ sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i lo -A fas
 - [ ] Add Wireshark PCAP analysis for each attack simulation
 - [ ] Test Snort 3 inline mode (IPS — actually block traffic, not just detect)
 - [ ] Simulate multi-stage attack (recon → exploit → exfil)
-- [ ] Add SSH brute-force detection rule
 - [ ] Tune UDP and HTTP rules to reduce false positives
-
+- [x] Add SSH brute-force detection rule
 ---
 
 *Built: September 2025 — ongoing | Snort 3.1.82.0 · ELK 8.19.4 · Kali Linux*
