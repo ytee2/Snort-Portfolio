@@ -179,6 +179,33 @@ sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i lo -A fas
 - Elasticsearch 8.x in a single-node lab uses HTTP not HTTPS — always verify protocol before troubleshooting connection issues
 
 ---
+---
+
+## Threat Hunting
+
+Beyond reactive detection with Snort, this portfolio includes a proactive
+threat hunting exercise using OSQuery — querying the system directly for
+indicators of compromise without waiting for an alert to fire.
+
+### Tool Used
+OSQuery 5.12.1 — treats the operating system as a queryable SQL database.
+Used by enterprise SOC teams to investigate endpoints in real time.
+
+### What Was Hunted
+- Running processes — looking for malware hiding in unexpected locations
+- Network connections — looking for suspicious outbound connections
+- Listening ports — looking for backdoor ports opened by attackers
+- Recently modified system files — looking for persistence mechanisms
+- User accounts — looking for unauthorised accounts added by attackers
+
+### Findings
+System was clean across all hunt areas. One external connection to Google
+Cloud infrastructure was noted and investigated. All processes, ports, and
+accounts were accounted for and legitimate.
+
+### Full Report
+[docs/threat-hunting/osquery_hunt.md](docs/threat-hunting/osquery_hunt.md)
+
 
 ## Future Work
 
@@ -187,6 +214,8 @@ sudo snort -c /etc/snort/snort.lua -R ~/Snort-Portfolio/local.rules -i lo -A fas
 - [ ] Simulate multi-stage attack (recon → exploit → exfil)
 - [ ] Tune UDP and HTTP rules to reduce false positives
 - [x] Add SSH brute-force detection rule
+- [ ] Schedule OSQuery queries using osqueryd daemon for continuous monitoring
+- [ ] Ship OSQuery results into ELK Stack for centralised visibility
 ---
 
 *Built: September 2025 — ongoing | Snort 3.1.82.0 · ELK 8.19.4 · Kali Linux*
